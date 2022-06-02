@@ -9,20 +9,15 @@ class Formatter:
         self.padding = 0
         self.fmt_re = re.compile(r'(["\\])')
         self.fmt = "event_time={time:YYYY-MM-DDTHH:mm:ssZZ} <magenta>level={level}</magenta> " \
-                   "<green>component={extra[component]}</green> <yellow>{message}</yellow> " \
-                   "logger={extra[name]} module={module} hostname={extra[hostname]} " \
+                   "<cyan>logger={extra[name]}</cyan> <green>component={extra[component]}</green> <yellow>{message}</yellow> "\
+                   "module={module} hostname={extra[hostname]} " \
                    "log_id={extra[log_id]} function={function} file= {file.path}/{module}.py:{line} \n{exception} "
 
     def quote(self, msg: str):
-        _fmt = r'"{}"'.format
-        return _fmt(self.fmt_re.sub(r'\\\1', msg))
+        return r'"{}"'.format(self.fmt_re.sub(r'\\\1', msg))
 
     def fmtLog(self, dict_log):
-        log = ""
-        for k in dict_log:
-            value = self.quote(str(dict_log[k]))
-            log += f"{k}={value} "
-        return log
+        return "".join([f"{k}={self.quote(str(dict_log[k]))} " for k in dict_log])
 
     def format(self, record):
         abs_path = pathlib.Path(record["file"].path).parent.absolute()
